@@ -86,48 +86,6 @@ You should see two IP addresses listed there.  Next we'll add a NACL rule to den
 
 Log in to the client instance in us-east-2 using AWS Systems Manager Session Manager and try to access the application.  The request should time out.
 
-### Disable API access in us-east-1
-
-Now, we'll use a Service Control Policy (SCP) to disable any API calls in us-east-1.  Before we start, confirm that you can make a simple change to one of our Route 53 records.  
-
-* Log in to the [Route 53 console](https://console.aws.amazon.com/route53/v2/hostedzones#)
-* View the zone `example.com`
-* Adjust the TTL for the `NS` record to some value other than the default value of `172800`.
-
-Of course in a failover situation you'd want to update the records for the application endpoint, but what if you couldn't reach the Route 53 control plane?
-
-Apply this SCP to the account you're using:
-
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-            "Sid": "DenyAccessToASpecificRole",
-            "Effect": "Deny",
-            "Action": [
-                "iam:*",
-                "route53:*"
-            ],
-            "Condition": {
-                "StringEquals": {
-                "aws:RequestedRegion": [
-                    "us-east-1"
-                ]
-                }
-            },
-            "Resource": [
-                "*"
-            ]
-            }
-        ]
-    }
-
-**WARNING** - Do not apply this SCP to a production account.  It disables access to IAM and Route 53.  You must be an Organization administrator to remove this SCP later.
-
-Go back to the console and confirm that you can no longer access Route 53 to make changes.  You should see messages like this in the console:
-
-    AccessDenied 403: User: arn:aws:iam::XXX:user/YYY is not authorized to perform: route53:* with an explicit deny
-
 ### Failover
 
 Log in to the [ARC console](https://us-west-2.console.aws.amazon.com/route53recovery/home#/recovery-control/home).  Go to the `TicTacToe-ControlPanel` and enable the routing control for us-west-2, and disable the control for us-east-1.  If the console is unavailable, you could use the highly reliable [cluster endpoints](https://docs.aws.amazon.com/r53recovery/latest/dg/route53-arc-best-practices.html) instead.
