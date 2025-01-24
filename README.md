@@ -29,6 +29,7 @@ This application is based on the [GitHub repo](https://github.com/sebsto/tictact
 #### first time only (one time operation)
 
     cd demo/app
+    export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=true
     npm install && cdk bootstrap 
 
 #### deploy the app 
