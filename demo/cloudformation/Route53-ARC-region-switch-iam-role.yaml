@@ -1,0 +1,64 @@
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: arn:aws:cloudformation:us-west-2:061039781095:generatedTemplate/574790f7-673b-465c-bfb2-7dbe6822f7a2
+Resources:
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      ManagedPolicyArns:
+        - !Ref IAMManagedPolicy
+      MaxSessionDuration: 3600
+      RoleName: RegionSwitch-role
+      Description: ''
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: arc-region-switch-beta.amazonaws.com
+  IAMManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: RegionSwitch-policy
+      Path: /
+      Description: ''
+      Groups: []
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Resource: '*'
+            Action:
+              - autoscaling:DescribeAutoScalingGroups
+              - lambda:GetFunction
+              - rds:DescribeGlobalClusters
+              - route53-recovery-control-config:DescribeRoutingControl
+              - arc-region-switch-beta:GetPlan
+              - iam:GetRole
+              - iam:SimulatePrincipalPolicy
+            Effect: Allow
+            Sid: PlanCreationPermissions
+          - Resource: '*'
+            Action:
+              - autoscaling:DescribeAutoScalingGroups
+              - autoscaling:SetDesiredCapacity
+              - lambda:InvokeFunction
+              - lambda:GetFunction
+              - rds:DescribeGlobalClusters
+              - rds:FailoverGlobalCluster
+              - rds:SwitchoverGlobalCluster
+              - route53-recovery-control-config:DescribeRoutingControl
+              - route53-recovery-control-config:DescribeControlPanel
+              - route53-recovery-control-config:DescribeCluster
+              - route53-recovery-cluster:UpdateRoutingControlStates
+              - arc-region-switch-beta:GetPlan
+              - arc-region-switch-beta:StartPlanExecution
+              - arc-region-switch-beta:UpdatePlanExecution
+              - arc-region-switch-beta:GetPlan
+              - arc-region-switch-beta:CancelPlanExecution
+              - arc-region-switch-beta:ListPlanExecutions
+              - arc-region-switch-beta:GetPlanExecution
+            Effect: Allow
+            Sid: PlanExecutionPermissions
+      Users: []
