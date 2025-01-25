@@ -97,3 +97,39 @@ Log in to the client instance in us-east-2 using SSM and try to access the appli
     curl TicTacToe.example.com | grep us-
 
 All replies should now be from the application in us-west-2.  
+
+## Region Switch
+
+### Create Region Switch IAM Role
+
+Run this command to create the IAM role:
+
+    ./Route53-create-readiness-check.sh
+
+Save the output, as you will use in the next step.
+
+### Retrieve Routing control ARNs
+
+You need the Routing Control ARNs when building the Region Switch worfklows.
+
+Go to the [ARC console](https://us-west-2.console.aws.amazon.com/route53recovery/home#/recovery-control/home). On the left navigation, select **Routing control**. Select `TicTacToe-ControlPanel`. In the **Routing controls** area, click `TicTacToe-Cell2-us-west-2`. Record the **Routing control ARN** as `us-west-2-ARN` in a Notes app. 
+
+In the **Routing control** area, select again `TicTacToe-ControlPanel`. In the **Routing controls** area, click `TicTacToe-Cell2-us-east-1`. Record the **Routing control ARN** as `us-east-1-ARN` in a Notes app.
+
+### Create Region Switch plan
+
+Go to the [ARC console](https://us-west-2.console.aws.amazon.com/route53recovery/home#/recovery-control/home). On the left navigation, select **Region Switch**. Then click `Create Region Switch plan`. 
+
+Set Plan name as `Tic Tac Toe plan`. Leave the **Multi-Region recovery approach** as `Active/Passive`. Set `us-east-1` as **Primary Region**, and `us-west-2` as **Standby Region**. For the **Plan execution IAM role**, use the ARN from previous step. Click **Create plan**.
+
+### Build workflow
+
+Click the **Build workflows** button. Select **Build workflows separetely for each Region**. Click **Save and continue**.
+
+Verify that you **Active us-east-1** is selected. Click **Add a step**. Select **Run in sequence**. Choose **ARC routing control execution block**. Click **Add and edit**.
+
+Set the **Step name** as `Activate us-east-1`. Click **Add routing controls**. Click **Add Routing control**. In the **Routing control ARN**, paste the `us-east-1-ARN`. Set the **Routing control state** as On. Click **Add Routing control**. In the **Routing control ARN**, paste the `us-west-2-ARN`. Set the **Routing control state** as Off. Click **Save**.
+
+Back in the Workflow builder, click **Save step**. In the **Select a workflow to add steps**, select `Activate us-west-2`. Repeat the same process, this time setting the `us-east-1-ARN` as Off and `us-west-2-ARN` as On.
+
+Click **Save workflows**.

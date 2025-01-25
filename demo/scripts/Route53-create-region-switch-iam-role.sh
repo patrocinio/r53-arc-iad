@@ -11,7 +11,11 @@ fi
 
 REGION=us-west-2
 STACK_NAME=Route53ARC-RegionSwitch-IAM-Role
-aws --region $REGION cloudformation create-stack               \
-    --template-body file://../cloudformation/Route53-ARC-region-switch-iam-role.yaml  \
-    --stack-name $STACK_NAME                                   \
-    --capabilities CAPABILITY_NAMED_IAM
+#aws --region $REGION cloudformation create-stack               \
+#    --template-body file://../cloudformation/Route53-ARC-region-switch-iam-role.yaml  \
+#    --stack-name $STACK_NAME                                   \
+#    --capabilities CAPABILITY_NAMED_IAM
+
+aws --region $REGION iam get-role \
+    --role-name RegionSwitch-Role |
+    jq -r .Role.Arn
