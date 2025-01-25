@@ -133,3 +133,13 @@ Set the **Step name** as `Activate us-east-1`. Click **Add routing controls**. C
 Back in the Workflow builder, click **Save step**. In the **Select a workflow to add steps**, select `Activate us-west-2`. Repeat the same process, this time setting the `us-east-1-ARN` as Off and `us-west-2-ARN` as On.
 
 Click **Save workflows**.
+
+### Validate workflow
+
+Go to the [ARC console](https://us-west-2.console.aws.amazon.com/route53recovery/home#/recovery-control/home). On the left navigation, select **Routing control**. Select the `TicTacToe-ControlPanel`. Ensure that the Routing controls have `TicTacToe-Cell2-us-west-2` as On and `TicTacToe-Cell1-us-east-1` os Off.
+
+Onb the left navigation, select **Region Switch**. Select `Tic Tac Toe plan`. Click **Execute plan**.
+
+In the **Select the Region to activate**, choose `us-east-1`. Select the checkbox in the Acknowledgement area. Click **Start execution**.
+
+Go to the [ARC console](https://us-west-2.console.aws.amazon.com/route53recovery/home#/recovery-control/home). On the left navigation, select **Routing control**. Select the `TicTacToe-ControlPanel`. Validate that the Routing controls have `TicTacToe-Cell2-us-west-2` as Off and `TicTacToe-Cell1-us-east-1` os On.
